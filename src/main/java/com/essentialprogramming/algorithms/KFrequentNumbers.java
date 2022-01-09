@@ -7,14 +7,13 @@ import java.util.stream.Collectors;
 
 public class KFrequentNumbers {
 
-    static void print_K_mostFrequentNumber(int[] arr, int k) {
+    static void print_K_mostFrequentNumberV1(int[] arr, int k) {
 
         //Create a HashMap to store element-frequency pair.
-        //final Map<Integer, Long> frequencyMap =  Arrays.stream(arr).boxed().collect(Collectors.groupingBy(c -> c, Collectors.counting()));
         final Map<Integer, Long> frequencyMap = new HashMap<>();
 
         for (int element : arr) {
-            //frequencyMap.put(element, frequencyMap.getOrDefault(element, 0) + 1);
+            //frequencyMap.put(element, frequencyMap.getOrDefault(element, 0L) + 1);
             frequencyMap.putIfAbsent(element, 1L);
             frequencyMap.computeIfPresent(element, (key, val) -> {
                 val = val + 1;
@@ -27,15 +26,34 @@ public class KFrequentNumbers {
         List<Map.Entry<Integer, Long>> list = new ArrayList<>(frequencyMap.entrySet());
 
         // Sort the list
-        list.sort((o1, o2) -> {
-            if (o1.getValue().equals(o2.getValue()))
-                return o2.getKey() - o1.getKey();
+        list.sort((a, b) -> {
+            if (a.getValue().equals(b.getValue()))
+                return b.getKey() - a.getKey();
             else
-                return (int) (o2.getValue() - o1.getValue());
+                return (int) (b.getValue() - a.getValue());
         });
 
         for (int i = 0; i < k; i++)
-            System.out.println(list.get(i).getKey());
+            System.out.print(list.get(i).getKey() + " ");
+        System.out.println();
+    }
+
+    static void print_K_mostFrequentNumberV2(int[] arr, int k) {
+
+        //Create a HashMap to store element-frequency pair.
+        final Map<Integer, Long> frequencyMap = Arrays.stream(arr).boxed().collect(Collectors.groupingBy(number -> number, Collectors.counting()));
+
+        PriorityQueue<Map.Entry<Integer, Long>> queue = new PriorityQueue<>((a, b) -> a.getValue().equals(b.getValue())
+                        ? Integer.compare(b.getKey(), a.getKey())
+                        : Long.compare(b.getValue(), a.getValue()));
+
+        // Insert the data from the map to the Priority Queue.
+        for (Map.Entry<Integer, Long> entry : frequencyMap.entrySet())
+            queue.offer(entry);
+
+        for (int i = 0; i < k; i++)
+            System.out.print(Objects.requireNonNull(queue.poll()).getKey() + " ");
+        System.out.println();
     }
 
 
@@ -44,6 +62,7 @@ public class KFrequentNumbers {
         int k = 3;
 
         // Function call
-        print_K_mostFrequentNumber(arr, k);
+        print_K_mostFrequentNumberV1(arr, k);
+        print_K_mostFrequentNumberV2(arr, k);
     }
 }
