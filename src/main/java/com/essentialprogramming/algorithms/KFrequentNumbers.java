@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class KFrequentNumbers {
 
-    static void print_K_mostFrequentNumberV1(int[] arr, int k) {
+    static void listAllKMostFrequentNumberVersion1(int[] arr, int k) {
 
         //Create a HashMap to store element-frequency pair.
         final Map<Integer, Long> frequencyMap = new HashMap<>();
@@ -33,12 +33,16 @@ public class KFrequentNumbers {
                 return (int) (b.getValue() - a.getValue());
         });
 
-        for (int i = 0; i < k; i++)
-            System.out.print(list.get(i).getKey() + " ");
-        System.out.println();
+        prettyPrint(list, k);
     }
 
-    static void print_K_mostFrequentNumberV2(int[] arr, int k) {
+    static void prettyPrint(List<Map.Entry<Integer, Long>> list, int k) {
+
+        System.out.println("[ " + list.stream().limit(k).map(entry -> entry.getKey().toString()).collect(Collectors.joining(", ")) + " ]");
+    }
+
+
+    static void listAllKMostFrequentNumberVersion2(int[] arr, int k) {
 
         //Create a HashMap to store element-frequency pair.
         final Map<Integer, Long> frequencyMap = Arrays.stream(arr).boxed().collect(Collectors.groupingBy(number -> number, Collectors.counting()));
@@ -51,9 +55,13 @@ public class KFrequentNumbers {
         for (Map.Entry<Integer, Long> entry : frequencyMap.entrySet())
             queue.offer(entry);
 
-        for (int i = 0; i < k; i++)
-            System.out.print(Objects.requireNonNull(queue.poll()).getKey() + " ");
-        System.out.println();
+        prettyPrint(queue, k);
+    }
+
+
+    static void prettyPrint(PriorityQueue<Map.Entry<Integer, Long>> queue, int k) {
+
+        System.out.println("[ " + queue.stream().limit(k).map(entry -> entry.getKey().toString()).collect(Collectors.joining(", ")) + " ]");
     }
 
 
@@ -62,7 +70,7 @@ public class KFrequentNumbers {
         int k = 3;
 
         // Function call
-        print_K_mostFrequentNumberV1(arr, k);
-        print_K_mostFrequentNumberV2(arr, k);
+        listAllKMostFrequentNumberVersion1(arr, k);
+        listAllKMostFrequentNumberVersion2(arr, k);
     }
 }
