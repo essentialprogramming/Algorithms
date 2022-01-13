@@ -7,20 +7,19 @@ import java.util.stream.Collectors;
 
 public class KFrequentNumbers {
 
-    static void listAllKMostFrequentNumberVersion1(int[] arr, int k) {
+    public static Collection<Map.Entry<Integer, Long>> K_mostFrequentNumberV1(int[] arr, int k) {
 
         //Create a HashMap to store element-frequency pair.
         final Map<Integer, Long> frequencyMap = new HashMap<>();
 
         for (int element : arr) {
             //frequencyMap.put(element, frequencyMap.getOrDefault(element, 0L) + 1);
-            frequencyMap.putIfAbsent(element, 1L);
+            frequencyMap.putIfAbsent(element, 0L);
             frequencyMap.computeIfPresent(element, (key, val) -> {
                 val = val + 1;
                 return val;
             });
         }
-
 
         // Create a list from elements of HashMap
         List<Map.Entry<Integer, Long>> list = new ArrayList<>(frequencyMap.entrySet());
@@ -33,16 +32,10 @@ public class KFrequentNumbers {
                 return (int) (b.getValue() - a.getValue());
         });
 
-        prettyPrint(list, k);
+        return list;
     }
 
-    static void prettyPrint(List<Map.Entry<Integer, Long>> list, int k) {
-
-        System.out.println("[ " + list.stream().limit(k).map(entry -> entry.getKey().toString()).collect(Collectors.joining(", ")) + " ]");
-    }
-
-
-    static void listAllKMostFrequentNumberVersion2(int[] arr, int k) {
+    public static Collection<Map.Entry<Integer, Long>> K_mostFrequentNumberV2(int[] arr, int k) {
 
         //Create a HashMap to store element-frequency pair.
         final Map<Integer, Long> frequencyMap = Arrays.stream(arr).boxed().collect(Collectors.groupingBy(number -> number, Collectors.counting()));
@@ -55,22 +48,23 @@ public class KFrequentNumbers {
         for (Map.Entry<Integer, Long> entry : frequencyMap.entrySet())
             queue.offer(entry);
 
-        prettyPrint(queue, k);
+        return queue;
     }
 
+    public static void prettyPrint(Collection<Map.Entry<Integer, Long>> list, int k) {
 
-    static void prettyPrint(PriorityQueue<Map.Entry<Integer, Long>> queue, int k) {
-
-        System.out.println("[ " + queue.stream().limit(k).map(entry -> entry.getKey().toString()).collect(Collectors.joining(", ")) + " ]");
+        System.out.println("{ " + list.stream().limit(k).map(entry -> entry.getKey().toString()).collect(Collectors.joining(", ")) + " }");
     }
-
 
     public static void main(String[] args) {
         int[] arr = {2, 1, 3, 3, 5, 5, 5, 2, 6, 1};
         int k = 3;
 
         // Function call
-        listAllKMostFrequentNumberVersion1(arr, k);
-        listAllKMostFrequentNumberVersion2(arr, k);
+        Collection<Map.Entry<Integer, Long>> list = K_mostFrequentNumberV1(arr, k);
+        prettyPrint(list, k);
+
+        Collection<Map.Entry<Integer, Long>> queue = K_mostFrequentNumberV2(arr,k);
+        prettyPrint(queue, k);
     }
 }
